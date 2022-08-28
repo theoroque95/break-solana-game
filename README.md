@@ -1,5 +1,24 @@
-## Break Solana Game [![Build Status](https://github.com/solana-labs/break/actions/workflows/break_action.yml/badge.svg?branch=main)](https://github.com/solana-labs/break/actions/workflows/break_action.yml/badge.svg?branch=main)
+# `Challenge4-solana`
 
+> Comparison between hello-world and break-solana-game on creating transactions and its accounts.
+
+## Transaction Creation
+- On establishing a connection, hello-world uses just the `clusterApiUrl` for the devnet while the break-solana-game fetches a new connection everytime the RPC changes and has a try-catch to determine if the connection is successful.
+- On transaction creation, there are multiple differences:
+1. hello-world creates the instruction first using `TransactionInstruction` and passing the public key, programId and the data allocation while on break-solana-game, it creates a transaction message using an RPC worker to handle the messages and send them in transactions, then it will get a transaction response message that contains the signature and serialized transaction to finally send the transaction using a web socket.
+2. hello-world only adds the whole `instruction` object for the transaction paired with the connection but for the break-solana-game, it accepts a lot of arguments to create a transaction like trackingId, blockhash, programId, and many more.
+3. break-solana-game uses web sockets to fetch and check the pending transactions, then dispatches a timeout with the trackingId after 90 seconds of no confirmation.
+4. hello-world simply creates an instruction, sends and confirms it, and deserializes it with the account that made it while in break-solana-game, since the transaction is sent via web socket, it awaits for it to confirm with a certain amount of timeout and upon confirmation, it will be dispatched to the context with the transaction details (feeAccount, programAccount and signature), trackingId and the pendingTransaction with the targetSlot.
+5. break-solana-game has a retry capability while hello-world doesn't have one.
+6. break-solana-game has a debugging mode that allows the developers to be notified and know the status of the transaction and track it at the same time, while hello-world doesn't have one.
+
+## Accounts
+Account/s in hello-world is a single account which was created if it's non-existent yet while on break-solana-game, multiple accounts are able to use the program simultaneously, which the program accounts can handle. Program accounts counter is being refreshed once a new transaction message is being created.
+Accounts has a config in break-solana-game which consists of the program accounts (publick keys of the accounts), fee payer keypairs (keypair of the program), and the account capacity of the program.
+I also noticed that on creating transactions on hello-world, it only needs the public key as an argument, while on break-solana-game, the feeAccountSecretKey needs to provide its secret key.
+
+------
+## Break Solana Game [![Build Status](https://github.com/solana-labs/break/actions/workflows/break_action.yml/badge.svg?branch=main)](https://github.com/solana-labs/break/actions/workflows/break_action.yml/badge.svg?branch=main)
 ### How it works
 
 The Break Solana Game consists of a 3 parts: a web client frontend, a web server backend, and an on-chain Solana program. The web server backend
