@@ -2,7 +2,7 @@
 
 > Comparison between hello-world and break-solana-game on creating transactions and its accounts.
 
-## Transaction Creation
+## Creating Transactions
 - On establishing a connection, hello-world uses just the `clusterApiUrl` for the devnet while the break-solana-game fetches a new connection everytime the RPC changes and has a try-catch to determine if the connection is successful.
 - On transaction creation, there are multiple differences:
 1. hello-world creates the instruction first using `TransactionInstruction` and passing the public key, programId and the data allocation while on break-solana-game, it creates a transaction message using an RPC worker to handle the messages and send them in transactions, then it will get a transaction response message that contains the signature and serialized transaction to finally send the transaction using a web socket.
